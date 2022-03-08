@@ -151,6 +151,19 @@ class Wallet extends React.Component {
             Adicionar despesa
           </button>
         </form>
+        <section>
+          <tr>
+            <th>Descrição</th>
+            <th>Tag</th>
+            <th>Método de pagamento</th>
+            <th>Valor</th>
+            <th>Moeda</th>
+            <th>Câmbio utilizado</th>
+            <th>Valor convertido</th>
+            <th>Moeda de conversão</th>
+            <th>Editar/Excluir</th>
+          </tr>
+        </section>
       </section>
     );
   }
@@ -170,5 +183,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
 Wallet.propTypes = {
   expensesDispatch: propTypes.func.isRequired,
   currencyDispatch: propTypes.func.isRequired,
-  currenciesGlobal: propTypes.arrayOf().isRequired,
+  currenciesGlobal: propTypes.arrayOf(propTypes.string).isRequired,
 };
