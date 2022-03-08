@@ -64,7 +64,7 @@ class Wallet extends React.Component {
 
   render() {
     const { value, description, isDisabled, method, tag, currency } = this.state;
-    const { currenciesGlobal } = this.props;
+    const { currenciesGlobal, expensesGlobal } = this.props;
     return (
       <section>
         <div>TrybeWallet</div>
@@ -151,19 +151,54 @@ class Wallet extends React.Component {
             Adicionar despesa
           </button>
         </form>
-        <section>
-          <tr>
-            <th>Descrição</th>
-            <th>Tag</th>
-            <th>Método de pagamento</th>
-            <th>Valor</th>
-            <th>Moeda</th>
-            <th>Câmbio utilizado</th>
-            <th>Valor convertido</th>
-            <th>Moeda de conversão</th>
-            <th>Editar/Excluir</th>
-          </tr>
-        </section>
+        <table>
+          <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Tag</th>
+              <th>Método de pagamento</th>
+              <th>Valor</th>
+              <th>Moeda</th>
+              <th>Câmbio utilizado</th>
+              <th>Valor convertido</th>
+              <th>Moeda de conversão</th>
+              <th>Editar/Excluir</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              expensesGlobal.map((expense) => (
+                (
+                  <tr key={ expense.id }>
+                    <td>{expense.description}</td>
+                    <td>{expense.tag}</td>
+                    <td>{expense.method}</td>
+                    <td>{parseFloat(expense.value).toFixed(2)}</td>
+                    <td>
+                      {
+                        (expense.exchangeRates[expense.currency].name)
+                          .split('/')[0]
+                      }
+                    </td>
+                    <td>
+                      {
+                        parseFloat(expense
+                          .exchangeRates[expense.currency].ask).toFixed(2)
+                      }
+                    </td>
+                    <td>
+                      {
+                        (expense.value * expense
+                          .exchangeRates[expense.currency].ask).toFixed(2)
+                      }
+                    </td>
+                    <td>Real</td>
+                  </tr>
+                )
+              ))
+            }
+          </tbody>
+        </table>
       </section>
     );
   }
@@ -171,6 +206,7 @@ class Wallet extends React.Component {
 
 const mapStateToProps = (state) => ({
   currenciesGlobal: state.wallet.currencies,
+  expensesGlobal: state.wallet.expenses,
 });
 
 const mapDispatchToProps = (dispacth) => ({
@@ -184,4 +220,5 @@ Wallet.propTypes = {
   expensesDispatch: propTypes.func.isRequired,
   currencyDispatch: propTypes.func.isRequired,
   currenciesGlobal: propTypes.arrayOf(propTypes.string).isRequired,
+  expensesGlobal: propTypes.arrayOf(propTypes.object).isRequired,
 };
