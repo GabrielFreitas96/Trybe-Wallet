@@ -23,6 +23,7 @@ class Wallet extends React.Component {
     // await getCurrencies();
     const { currencyDispatch } = this.props;
     currencyDispatch();
+    // console.log('Currencies estado global', currenciesGlobal);
   }
 
   handleChangeForm = ({ target }) => {
@@ -63,6 +64,7 @@ class Wallet extends React.Component {
 
   render() {
     const { value, description, isDisabled, method, tag, currency } = this.state;
+    const { currenciesGlobal } = this.props;
     return (
       <section>
         <div>TrybeWallet</div>
@@ -88,8 +90,16 @@ class Wallet extends React.Component {
               value={ currency }
               onChange={ this.handleChangeForm }
             >
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
+              {currenciesGlobal.filter((item) => item !== 'USDT')
+                .map((element, index) => (
+                  <option
+                    key={ index }
+                    value={ element }
+                    data-testid={ `${element}` }
+                  >
+                    {element}
+                  </option>
+                ))}
             </select>
           </label>
           <label htmlFor="method-input">
@@ -160,4 +170,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
 Wallet.propTypes = {
   expensesDispatch: propTypes.func.isRequired,
   currencyDispatch: propTypes.func.isRequired,
+  currenciesGlobal: propTypes.arrayOf().isRequired,
 };
