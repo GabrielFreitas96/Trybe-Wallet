@@ -1,7 +1,7 @@
 import propTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { ExpensesAction, fetchCurrency } from '../actions';
+import { DeleteExpenseAction, ExpensesAction, fetchCurrency } from '../actions';
 import Header from '../components/Header';
 import getCurrencies from '../service/service';
 
@@ -19,11 +19,8 @@ class Wallet extends React.Component {
   }
 
   async componentDidMount() {
-    // console.log('DidMount');
-    // await getCurrencies();
     const { currencyDispatch } = this.props;
     currencyDispatch();
-    // console.log('Currencies estado global', currenciesGlobal);
   }
 
   handleChangeForm = ({ target }) => {
@@ -56,10 +53,16 @@ class Wallet extends React.Component {
         tag,
         exchangeRates,
       };
-      // console.log('Objecto Expenses', objectExpense);
       expensesDispatch(objectExpense);
       this.setState({ value: '' });
     });
+  };
+
+  clickDeleteExpense = (id) => {
+    const { expensesGlobal, deleteExpenseDispatch } = this.props;
+    const newExpenses = expensesGlobal.filter((expense) => (expense.id !== id));
+    console.log('New Expenses', newExpenses);
+    deleteExpenseDispatch(newExpenses);
   };
 
   render() {
@@ -193,6 +196,22 @@ class Wallet extends React.Component {
                       }
                     </td>
                     <td>Real</td>
+                    <td>
+                      <button
+                        data-testid="edit-btn"
+                        type="button"
+                        onClick={ () => { this.clickDeleteExpense(expense.id); } }
+                      >
+                        Editar
+                      </button>
+                      <button
+                        data-testid="delete-btn"
+                        type="button"
+                        onClick={ () => { this.clickDeleteExpense(expense.id); } }
+                      >
+                        Excluir
+                      </button>
+                    </td>
                   </tr>
                 )
               ))
@@ -212,6 +231,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispacth) => ({
   expensesDispatch: (state) => dispacth(ExpensesAction(state)),
   currencyDispatch: () => dispacth(fetchCurrency()),
+  deleteExpenseDispatch: (state) => dispacth(DeleteExpenseAction(state)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
@@ -221,4 +241,5 @@ Wallet.propTypes = {
   currencyDispatch: propTypes.func.isRequired,
   currenciesGlobal: propTypes.arrayOf(propTypes.string).isRequired,
   expensesGlobal: propTypes.arrayOf(propTypes.object).isRequired,
+  deleteExpenseDispatch: propTypes.arrayOf(propTypes.object).isRequired,
 };
