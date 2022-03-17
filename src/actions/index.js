@@ -6,6 +6,7 @@ export const WALLET_INFO = 'WALLET_INFO';
 export const EXPENSES_INFO = 'EXPENSES_INFO';
 export const CURRENCY_FETCH = 'CURRENCY_FETCH';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+export const EDIT_EXPENSE = 'EDIT_EXPENSE';
 
 export const UserAction = (email) => ({
   type: USER_INFO,
@@ -30,5 +31,10 @@ export const fetchCurrency = () => async (dispatch) => {
 
 export const DeleteExpenseAction = (expenses) => ({
   type: DELETE_EXPENSE,
+  payload: expenses,
+});
+
+export const EditExpenseAction = (expenses) => ({
+  type: EDIT_EXPENSE,
   payload: expenses,
 });

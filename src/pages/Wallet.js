@@ -1,8 +1,10 @@
 import propTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { DeleteExpenseAction, ExpensesAction, fetchCurrency } from '../actions';
+import { DeleteExpenseAction, EditExpenseAction,
+  ExpensesAction, fetchCurrency } from '../actions';
 import Header from '../components/Header';
+import Table from '../components/Table';
 import getCurrencies from '../service/service';
 
 class Wallet extends React.Component {
@@ -15,6 +17,9 @@ class Wallet extends React.Component {
       method: 'Dinheiro',
       tag: 'Alimentação',
       currency: 'USD',
+      buttonAddEdit: true,
+      idEdit: 0,
+      exchangeRatesEdit: {},
     };
   }
 
@@ -65,9 +70,55 @@ class Wallet extends React.Component {
     deleteExpenseDispatch(newExpenses);
   };
 
+  clickEditExpense = (id) => {
+    const { expensesGlobal } = this.props;
+    const expenseToEdit = expensesGlobal.find((item) => item.id === id);
+    const { value, description, method, tag, currency, exchangeRates } = expenseToEdit;
+    this.setState({
+      value,
+      description,
+      method,
+      tag,
+      currency,
+      buttonAddEdit: false,
+      idEdit: id,
+      exchangeRatesEdit: exchangeRates,
+    });
+  };
+
+  editExpense = async () => {
+    const { idEdit, value, description, method, tag, currency,
+      exchangeRatesEdit } = this.state;
+    const { expensesGlobal, editExpenseDispatch } = this.props;
+    const objectEdit = {
+      id: idEdit,
+      value,
+      description,
+      currency,
+      method,
+      tag,
+      exchangeRates: exchangeRatesEdit,
+    };
+    const newExpenses = [];
+    expensesGlobal.forEach((item, index) => {
+      if (item.id === objectEdit.id) {
+        newExpenses[index] = objectEdit;
+      } else {
+        newExpenses[index] = item;
+      }
+    });
+    editExpenseDispatch(newExpenses);
+    this.setState({ idEdit: 0,
+      value: '',
+      description: '',
+      buttonAddEdit: true,
+      exchangeRatesEdit: {} });
+  };
+
   render() {
-    const { value, description, isDisabled, method, tag, currency } = this.state;
-    const { currenciesGlobal, expensesGlobal } = this.props;
+    const { value, description, isDisabled, method, tag, currency,
+      buttonAddEdit } = this.state;
+    const { currenciesGlobal } = this.props;
     return (
       <section>
         <div>TrybeWallet</div>
@@ -146,78 +197,26 @@ class Wallet extends React.Component {
               onChange={ this.handleChangeForm }
             />
           </label>
-          <button
-            type="button"
-            onClick={ this.clickAddExpense }
-            disabled={ isDisabled }
-          >
-            Adicionar despesa
-          </button>
+          {buttonAddEdit ? (
+            <button
+              type="button"
+              onClick={ this.clickAddExpense }
+              disabled={ isDisabled }
+            >
+              Adicionar despesa
+            </button>)
+            : (
+              <button
+                type="button"
+                onClick={ () => { this.editExpense(); } }
+              >
+                Editar despesa
+              </button>)}
         </form>
-        <table>
-          <thead>
-            <tr>
-              <th>Descrição</th>
-              <th>Tag</th>
-              <th>Método de pagamento</th>
-              <th>Valor</th>
-              <th>Moeda</th>
-              <th>Câmbio utilizado</th>
-              <th>Valor convertido</th>
-              <th>Moeda de conversão</th>
-              <th>Editar/Excluir</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              expensesGlobal.map((expense) => (
-                (
-                  <tr key={ expense.id }>
-                    <td>{expense.description}</td>
-                    <td>{expense.tag}</td>
-                    <td>{expense.method}</td>
-                    <td>{parseFloat(expense.value).toFixed(2)}</td>
-                    <td>
-                      {
-                        (expense.exchangeRates[expense.currency].name)
-                          .split('/')[0]
-                      }
-                    </td>
-                    <td>
-                      {
-                        parseFloat(expense
-                          .exchangeRates[expense.currency].ask).toFixed(2)
-                      }
-                    </td>
-                    <td>
-                      {
-                        (expense.value * expense
-                          .exchangeRates[expense.currency].ask).toFixed(2)
-                      }
-                    </td>
-                    <td>Real</td>
-                    <td>
-                      <button
-                        data-testid="edit-btn"
-                        type="button"
-                        onClick={ () => { this.clickDeleteExpense(expense.id); } }
-                      >
-                        Editar
-                      </button>
-                      <button
-                        data-testid="delete-btn"
-                        type="button"
-                        onClick={ () => { this.clickDeleteExpense(expense.id); } }
-                      >
-                        Excluir
-                      </button>
-                    </td>
-                  </tr>
-                )
-              ))
-            }
-          </tbody>
-        </table>
+        <Table
+          clickEditExpense={ this.clickEditExpense }
+          clickDeleteExpense={ this.clickDeleteExpense }
+        />
       </section>
     );
   }
@@ -227,19 +226,18 @@ const mapStateToProps = (state) => ({
   currenciesGlobal: state.wallet.currencies,
   expensesGlobal: state.wallet.expenses,
 });
-
 const mapDispatchToProps = (dispacth) => ({
   expensesDispatch: (state) => dispacth(ExpensesAction(state)),
   currencyDispatch: () => dispacth(fetchCurrency()),
   deleteExpenseDispatch: (state) => dispacth(DeleteExpenseAction(state)),
+  editExpenseDispatch: (state) => dispacth(EditExpenseAction(state)),
 });
-
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
-
 Wallet.propTypes = {
   expensesDispatch: propTypes.func.isRequired,
   currencyDispatch: propTypes.func.isRequired,
   currenciesGlobal: propTypes.arrayOf(propTypes.string).isRequired,
   expensesGlobal: propTypes.arrayOf(propTypes.object).isRequired,
   deleteExpenseDispatch: propTypes.arrayOf(propTypes.object).isRequired,
+  editExpenseDispatch: propTypes.arrayOf(propTypes.object).isRequired,
 };
