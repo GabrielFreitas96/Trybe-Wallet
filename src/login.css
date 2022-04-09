@@ -1,0 +1,56 @@
+.div-image {
+  width: 500px;
+  height: 500px;
+  
+}
+
+.div-image img {
+  width: 400px;
+  height: 400px;
+}
+
+.section-login {
+  display: flex;
+  align-items: center;
+}
+
+.div-img-login {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+}
+.form{
+  display: flex;
+  
+}
+.form-login {
+  display: flex;
+  direction: column;
+  flex-wrap: wrap;
+}
+
+.div-email {
+
+}
+
+.div-password {
+
+}
+
+.div-btn-entrar{
+  
+}
+
+.input-login {
+  border-radius: 10px;
+  width: 200px;
+  padding : 6px;
+}
+
+.btn-entrar{
+  width: 200px;
+  padding: 6px;
+  background-color: #00FF7F;
+  color: white;
+  font-weight: bolder;
+}

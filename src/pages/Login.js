@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import '../login.css';
+import wallet from '../images/wallet.svg';
 import { UserAction } from '../actions';
 
 class Login extends React.Component {
@@ -36,33 +38,44 @@ class Login extends React.Component {
     // console.log(this.props);
     const { email, password, buttonDisabled } = this.state;
     return (
-      <section>
-        <div>Login</div>
-        <div>
-          <form>
-            <input
-              data-testid="email-input"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={ email }
-              onChange={ this.handleChange }
-            />
-            <input
-              data-testid="password-input"
-              type="password"
-              name="password"
-              value={ password }
-              onChange={ this.handleChange }
-            />
-            <button
-              type="button"
-              disabled={ buttonDisabled }
-              onClick={ this.clickBtnEntrar }
+      <section className="section-login">
+        <div className="div-img-login">
+          <div className="div-image">
+            <img src={ wallet } alt="Logo Tryber" />
+          </div>
+          <form className="form-login">
+            <div className="div-email">
+              <input
+                className="input-login"
+                data-testid="email-input"
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={ email }
+                onChange={ this.handleChange }
+              />
+            </div>
+            <div className="div-password">
+              <input
+                className="input-login"
+                data-testid="password-input"
+                type="password"
+                name="password"
+                value={ password }
+                onChange={ this.handleChange }
+              />
+            </div>
+            <div className="div-btn-entrar">
+              <button
+                className="btn-entrar"
+                type="button"
+                disabled={ buttonDisabled }
+                onClick={ this.clickBtnEntrar }
 
-            >
-              Entrar
-            </button>
+              >
+                Entrar
+              </button>
+            </div>
           </form>
         </div>
       </section>
